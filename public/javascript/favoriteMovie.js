@@ -6,7 +6,7 @@ function favoriteMovie(e){
   favoriteMovieObject.name = item.getElementsByClassName("Title")[0].innerText;
   favoriteMovieObject.oid = item.getElementsByClassName("imdbID")[0].innerText;
 
-  ajaxCall("POST", "favorites", favoriteMovieCallback)
+  ajaxCall("POST", "favorites", favoriteMovieCallback, favoriteMovieObject)
 }
 
 

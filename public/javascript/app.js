@@ -8,6 +8,7 @@ window.onload = function() {
 
 
 // Creates and appends the Headers for a table
+// It works by creating a table, adding a row and create a <th> tag for every item of dataTableCellArray and rendering it onto div#movieList
 function createHeaders(dataTableCellArray){
   var movieDiv = document.getElementById("movieList");
   movieDiv.innerHTML = "";
@@ -23,7 +24,9 @@ function createHeaders(dataTableCellArray){
 }
 
 // Appends the Movie data to the Table for searchMovies and myFavorite function
-function displayDataInTable(data){
+// This adds on to the table created by createHeaders function.
+// It works by getting the table and for each Object that we got back from the ajax response we create a new row and adds the value to the row. Afterwards it adds a Favorite Button to post to favorites
+function displayDataInTable(data, display){
   var dataTable = document.getElementsByTagName('table')[0];
   for (var i = 0; i < data.length; i++){
   var dataTablerow = document.createElement('tr');
@@ -42,15 +45,19 @@ function displayDataInTable(data){
         dataTableCellLink.appendChild(dataTableCell);
         dataTableCell = dataTableCellLink;
       }
-      dataTablerow.appendChild(dataTableCell)
+      dataTablerow.appendChild(dataTableCell);
     }
-  var favoriteButton = CreateFavoriteButton()
-  dataTableCell.appendChild(favoriteButton);
+  if (display != "doNotDisplay"){
+    var favoriteButton = CreateFavoriteButton();
+    dataTableCell.appendChild(favoriteButton);
+  }
   dataTable.appendChild(dataTablerow);
   }
 }
 
 // display Movie data for findMovie function
+// Easier to separate out rendering of the more detailed Movie data because rendering of the view is different
+// It works by getting the table and for each attribute of the Object that we got back from the ajax response we create a new row and adds the key and value to the row. Afterwards it adds a Favorite Button to post to favorites
 function displayDataInTableForObject(data){
   var movieDiv = document.getElementById("movieList");
   movieDiv.innerHTML = "";
@@ -81,31 +88,11 @@ function displayDataInTableForObject(data){
   movieDiv.appendChild(dataTable);
 }
 
+// separated the action of creating a favorite button
 function CreateFavoriteButton(){
   var favoriteButton = document.createElement("button");
   favoriteButton.setAttribute("id", "favorite");
   favoriteButton.addEventListener('click', favoriteMovie);
   favoriteButton.innerHTML = "Favorite this Movie";
   return favoriteButton;
-}
-
-function myFavorite(){
-  var request = new XMLHttpRequest();
-  request.open('GET', "favorites", true);
-  request.onload = function() {
-    if (request.status >= 200 && request.status < 400) {
-      var data = JSON.parse(request.responseText);
-      createHeaders(["Title", "imdbID"]);
-      displayDataInTable(data);
-    } else {
-      console.log("Estabished Connection But There is an Error");
-    }
-  };
-  request.onerror = function() {
-    console.log("Cannot establish connection to server");
-  };
-  request.send();
-
-
-
 }
