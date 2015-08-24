@@ -48,9 +48,13 @@ function displayDataInTable(data){
   var dataTable = document.getElementsByTagName('table')[0];
   for (var i = 0; i < data.length; i++){
   var dataTablerow = document.createElement('tr');
+  dataTablerow.setAttribute("class", "top");
     for (var key in data[i]){
       var dataTableCell = document.createElement('th');
       dataTableCell.innerHTML = data[i][key];
+      if (key == "Title" || key == "Year" || key == "imdbID") {
+        dataTableCell.setAttribute("class", key);
+      }
       if (key == "Title") {
         var dataTableCellLink = document.createElement('a');
         dataTableCellLink.setAttribute("id", "movieSearch");
@@ -61,10 +65,7 @@ function displayDataInTable(data){
       }
       dataTablerow.appendChild(dataTableCell)
     }
-  var favoriteButton = document.createElement("button");
-  favoriteButton.setAttribute("id", "favorite");
-  favoriteButton.addEventListener('click', favoriteMovie);
-  favoriteButton.innerHTML = "Favorite this Movie";
+  var favoriteButton = CreateFavoriteButton()
   dataTableCell.appendChild(favoriteButton);
   dataTable.appendChild(dataTablerow);
   }
@@ -79,7 +80,6 @@ function findMovie(){
     if (request.status >= 200 && request.status < 400) {
       console.log(request.responseText)
       var data = JSON.parse(request.responseText);
-      createHeadersInObject(["Title", "Year", "Rated", "Released", "Runtime", "Genre", "Director", "Writer", "Actors", "Plot", "Language", "Country", "Awards", "Poster", "Metascore", "imdbRating", "imdbRatingVotes", "imdbID", "Type", "Favorite"]);
       displayDataInTableForObject(data);
     } else {
       console.log("Estabished Connection But There is an Error");
@@ -93,60 +93,64 @@ function findMovie(){
   request.send();
 }
 
-function createHeadersInObject(dataTableCellArray){
-  var movieDiv = document.getElementById("movieList");
-  movieDiv.innerHTML = "";
-  var dataTable = document.createElement('table');
-  for (var i = 0; i < dataTableCellArray.length; i++){
-    var dataTablerow = document.createElement('tr');
-    var dataTableCell = document.createElement('th');
-    dataTableCell.innerHTML = dataTableCellArray[i];
-    dataTablerow.appendChild(dataTableCell);
-    dataTable.appendChild(dataTablerow);
-  }
-  movieDiv.appendChild(dataTable);
-}
-
 function displayDataInTableForObject(data){
   var movieDiv = document.getElementById("movieList");
   movieDiv.innerHTML = "";
   var dataTable = document.createElement('table');
+  dataTable.setAttribute("class", "top");
     for (var key in data){
       var dataTablerow = document.createElement('tr');
       var dataTableCell = document.createElement('th');
-      dataTableCell.innerHTML = data[key];
-      dataTablerow.appendChild(dataTableCell)
+      if (key == "Title" || key == "Year" || key == "imdbID") {
+        dataTableCell.setAttribute("class", key);
+      }
+      if (key == "Poster"){
+        var dataTableCell = document.createElement('img');
+        dataTableCell.setAttribute("src", data[key]);
+      } else {
+        dataTableCell.innerHTML = data[key];
+      }
+      dataTablerow.innerHTML = "<th>" + key + "</th>";
+      dataTablerow.appendChild(dataTableCell);
+      dataTable.appendChild(dataTablerow);
     }
-  var favoriteButton = document.createElement("button");
-  favoriteButton.setAttribute("id", "favorite");
-  favoriteButton.innerHTML = "Favorite this Movie";
-  dataTableCell.appendChild(favoriteButton);
+  var dataTablerow = document.createElement('tr');
+  var dataTableCell2 = document.createElement('th');
+  var favoriteButton = CreateFavoriteButton();
+  dataTablerow.innerHTML = "<th>" + "Favorite" + "</h1>";
+  dataTablerow.appendChild(favoriteButton);
   dataTable.appendChild(dataTablerow);
+  movieDiv.appendChild(dataTable);
 }
 
-function favoriteMovie(){
-  debugger;
+function CreateFavoriteButton(){
+  var favoriteButton = document.createElement("button");
+  favoriteButton.setAttribute("id", "favorite");
+  favoriteButton.addEventListener('click', favoriteMovie);
+  favoriteButton.innerHTML = "Favorite this Movie";
+  return favoriteButton;
+}
+
+function favoriteMovie(e){
+  e.preventDefault();
+  var item = this.closest(".top");
 
   favoriteMovieObject = {};
-  favoriteMovieObject.Title =
-  favoriteMovieObject.Year =
-  favoriteMovieObject.imdbID
+  favoriteMovieObject.name = item.getElementsByClassName("Title")[0].innerText;
+  favoriteMovieObject.oid = item.getElementsByClassName("imdbID")[0].innerText;
 
   var request = new XMLHttpRequest();
-  request.open('POST', "/favorite", true);
+  request.open('POST', "favorites", true);
   request.onload = function() {
     if (request.status >= 200 && request.status < 400) {
-      createHeaders(["Title", "Year", "Rated", "Released", "Runtime", "Genre", " Director", "Writer", "Actors", "Plot", "Language", "Country", "Awards", "Favorite"]);
-      displayDataInTable(data);
+      console.log("favorited")
     } else {
       console.log("Estabished Connection But There is an Error");
     }
   };
-
   request.onerror = function() {
     console.log("Cannot establish connection to server");
   };
-
-  request.send(data);
+  request.send(JSON.stringify(favoriteMovieObject));
 
 }
