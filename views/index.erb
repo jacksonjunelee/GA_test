@@ -3,18 +3,23 @@
 <head>
 	<meta charset="UTF-8">
 	<title>OMDB</title>
-	<!-- <link rel="stylesheet" href="/style.css"> -->
+	<link rel="stylesheet" href="/stylesheet/style.css">
   <script src="javascript/app.js"></script>
+  <script src="javascript/ajaxCall.js"></script>
+  <script src="javascript/searchMovies.js"></script>
+  <script src="javascript/findMovieInfo.js"></script>
+  <script src="javascript/favoriteMovie.js"></script>
 </head>
 <body>
 	<div id="container">
     <div class="main">
       <h1>Find a Movie</h1>
     	<div id="movieForm">
-    		<label for="title">Title<br><br>
+    		<label for="title">Title: </label>
     			<input id="inputtedMovie" type="text" name="movie[title]"><br><br>
     		</label>
-    		<button id="search">Find</button>
+    		<button id="search">Search</button>
+    		<button id="myFavorite">My Favorite Movies</button>
     	</div>
   	</div>
     <h1 id="movieList"></h1>

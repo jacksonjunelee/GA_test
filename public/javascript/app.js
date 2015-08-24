@@ -1,34 +1,13 @@
+// Check to see if JS is loaded
+// Adds an click event listener to the Search and myFavorite button
 window.onload = function() {
   console.log('I am loaded');
-  document.getElementById("search").addEventListener('click', findMovies);
+  document.getElementById("search").addEventListener('click', searchMovies);
+  document.getElementById("myFavorite").addEventListener('click', myFavorite);
 };
 
-// List Movies from search result
 
-function findMovies(){
-  var movieInput = document.getElementById("inputtedMovie").value;
-  var formattedmovieInput = movieInput.split(" ").join('+');
-  var request = new XMLHttpRequest();
-  request.open('GET', "http://www.omdbapi.com/?s=" + formattedmovieInput + "&r=json", true);
-  request.onload = function() {
-    if (request.status >= 200 && request.status < 400) {
-      console.log(request.responseText);
-      var data = JSON.parse(request.responseText);
-      createHeaders(["Title", "Year", "imdbID", "Type", "Favorite"]);
-      displayDataInTable(data["Search"]);
-    } else {
-      console.log("Estabished Connection But There is an Error");
-    }
-  };
-
-  request.onerror = function() {
-    console.log("Cannot establish connection to server");
-  };
-
-  request.send();
-}
-
-// Creates and appends the Headers for the table
+// Creates and appends the Headers for a table
 function createHeaders(dataTableCellArray){
   var movieDiv = document.getElementById("movieList");
   movieDiv.innerHTML = "";
@@ -43,7 +22,7 @@ function createHeaders(dataTableCellArray){
   movieDiv.appendChild(dataTable);
 }
 
-// Appends the Movie data to the Table
+// Appends the Movie data to the Table for searchMovies and myFavorite function
 function displayDataInTable(data){
   var dataTable = document.getElementsByTagName('table')[0];
   for (var i = 0; i < data.length; i++){
@@ -59,7 +38,7 @@ function displayDataInTable(data){
         var dataTableCellLink = document.createElement('a');
         dataTableCellLink.setAttribute("id", "movieSearch");
         dataTableCellLink.setAttribute("href", "#");
-        dataTableCellLink.addEventListener('click', findMovie);
+        dataTableCellLink.addEventListener('click', findMovieInfo);
         dataTableCellLink.appendChild(dataTableCell);
         dataTableCell = dataTableCellLink;
       }
@@ -71,28 +50,7 @@ function displayDataInTable(data){
   }
 }
 
-function findMovie(){
-  var movie = this.innerText
-  var formattedmovieInput = movie.split(" ").join('+');
-  var request = new XMLHttpRequest();
-  request.open('GET', "http://www.omdbapi.com/?t=" + formattedmovieInput + "&y=&plot=full&r=json", true);
-  request.onload = function() {
-    if (request.status >= 200 && request.status < 400) {
-      console.log(request.responseText)
-      var data = JSON.parse(request.responseText);
-      displayDataInTableForObject(data);
-    } else {
-      console.log("Estabished Connection But There is an Error");
-    }
-  };
-
-  request.onerror = function() {
-    console.log("Cannot establish connection to server");
-  };
-
-  request.send();
-}
-
+// display Movie data for findMovie function
 function displayDataInTableForObject(data){
   var movieDiv = document.getElementById("movieList");
   movieDiv.innerHTML = "";
@@ -117,7 +75,7 @@ function displayDataInTableForObject(data){
   var dataTablerow = document.createElement('tr');
   var dataTableCell2 = document.createElement('th');
   var favoriteButton = CreateFavoriteButton();
-  dataTablerow.innerHTML = "<th>" + "Favorite" + "</h1>";
+  dataTablerow.innerHTML = "<th>" + "Favorite" + "</th>";
   dataTablerow.appendChild(favoriteButton);
   dataTable.appendChild(dataTablerow);
   movieDiv.appendChild(dataTable);
@@ -131,19 +89,14 @@ function CreateFavoriteButton(){
   return favoriteButton;
 }
 
-function favoriteMovie(e){
-  e.preventDefault();
-  var item = this.closest(".top");
-
-  favoriteMovieObject = {};
-  favoriteMovieObject.name = item.getElementsByClassName("Title")[0].innerText;
-  favoriteMovieObject.oid = item.getElementsByClassName("imdbID")[0].innerText;
-
+function myFavorite(){
   var request = new XMLHttpRequest();
-  request.open('POST', "favorites", true);
+  request.open('GET', "favorites", true);
   request.onload = function() {
     if (request.status >= 200 && request.status < 400) {
-      console.log("favorited")
+      var data = JSON.parse(request.responseText);
+      createHeaders(["Title", "imdbID"]);
+      displayDataInTable(data);
     } else {
       console.log("Estabished Connection But There is an Error");
     }
@@ -151,6 +104,8 @@ function favoriteMovie(e){
   request.onerror = function() {
     console.log("Cannot establish connection to server");
   };
-  request.send(JSON.stringify(favoriteMovieObject));
+  request.send();
+
+
 
 }

@@ -1,0 +1,23 @@
+h1 {
+  font-size: 4em;
+  text-align: center;
+}
+
+div#movieForm {
+  text-align: center;
+}
+
+label{
+  font-size: 3em;
+}
+
+input#inputtedMovie{
+  padding: 7px;
+  font-size: 2em;
+  width: 30%;
+}
+
+table {
+  font-size:  30px;
+  width: 100%;
+}

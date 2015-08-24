@@ -1,4 +1,6 @@
 require 'sinatra'
+require "sinatra/reloader"
+require "better_errors"
 require 'pry'
 require 'json'
 
@@ -7,17 +9,16 @@ get '/' do
 end
 
 get '/favorites' do
-  "Hello World"
+  response.header['Content-Type'] = 'application/json'
+  File.read('data.json')
 end
 
 post '/favorites' do
-  binding.pry
-  console.log("Fuck")
-  # params = JSON.parse(request.env["rack.input"].read)
-  # file = JSON.parse(File.read('data.json'))
-  # return 'Invalid Request' unless params[:name] && params[:oid]
-  # movie = { name: params[:name], oid: params[:oid] }
-  # file << movie
-  # File.write('data.json',JSON.pretty_generate(file))
-  # movie.to_json
+  params = JSON.parse(request.env["rack.input"].read)
+  movie = {name: params["name"], oid: params["oid"] }
+  return 'Invalid Request' unless params["name"] && params["oid"]
+  file = JSON.parse(File.read('data.json'))
+  file << movie
+  File.write('data.json',JSON.pretty_generate(file))
+  movie.to_json
 end
