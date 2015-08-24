@@ -1,7 +1,7 @@
 function findMovieInfo(){
   var movie = this.innerText
   var formattedmovieInput = movie.split(" ").join('+');
-  ajaxCall("GET", "http://www.omdbapi.com/?t=" + formattedmovieInput + "&y=&plot=full&r=json", findMovieInfoCallback)
+  ajaxCall("GET", "https://www.omdbapi.com/?t=" + formattedmovieInput + "&y=&plot=full&r=json", findMovieInfoCallback)
 
 }
 

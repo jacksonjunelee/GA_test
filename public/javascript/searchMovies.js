@@ -3,7 +3,7 @@
 function searchMovies(){
   var movieInput = document.getElementById("inputtedMovie").value;
   var formattedmovieInput = movieInput.split(" ").join('+');
-  ajaxCall('GET', "http://www.omdbapi.com/?s=" + formattedmovieInput + "&r=json", searchMoviesCallback);
+  ajaxCall('GET', "https://www.omdbapi.com/?s=" + formattedmovieInput + "&r=json", searchMoviesCallback);
 }
 
 // action after a successful ajaxCall
